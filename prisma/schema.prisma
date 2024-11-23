@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// id: 用戶的唯一識別碼，使用 MongoDB 的 ObjectId。
+// name, username, email: 可選的屬性，username 和 email 為唯一。
+// emailVerified, hashedPassword, createdAt, updatedAt: 記錄與用戶相關的時間和密碼資訊。
+// accounts 和 links: 與 Account 和 Link 模型的一對多關係。
+model User {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  username       String?   @unique
+  email          String?   @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  image          String?
+  customImage    String?
+
+  accounts Account[]
+  recipes  Recipe[]
+
+  // @@map("users") // 指定 Collection 名稱為小寫的 user
+}
+
+// id: 帳戶的唯一識別碼。
+// userId: 參考 User 模型的 ID，與用戶建立關聯。
+// provider, providerAccountId: 記錄提供者的資訊，用於 OAuth 認證。
+// 其他欄位用於存儲 OAuth 相關的令牌和狀態。
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  type              String
+  userId            String  @db.ObjectId
+  provider          String
+  providerAccountId String
+  refreshToken      String? @db.String
+  accessToken       String? @db.String
+  expiresAt         Int?
+  tokenType         String?
+  scope             String?
+  idToken           String? @db.String
+  sessionState      String? @db.String
+  oauthToken        String? @db.String
+  oauthTokenSecret  String? @db.String
+
+  // 這裡的 onDelete: Cascade 會將 User 刪除時，一併刪除 Account
+  // relation 的 fields 是指 Account 的 userId，references 是指 User 的 id
+  // 代表 Account 的 userId 會參照 User 的 id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // @@map("accounts") // 指定 Collection 名稱為小寫的 accounts
+
+  @@unique([provider, providerAccountId])
+}
+
+model Recipe {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  coverImage  String
+  forPeople   String
+  cookingTime Int?
+  ingredients Json?
+  steps       String[]     @default([])
+  tags        String?      @db.String
+  cookingTool String?      @db.String
+  refUrl      String?      @db.String
+  note        String?      @db.String
+  status      RecipeStatus @default(DRAFT)
+  author      User         @relation(fields: [authorId], references: [id])
+  authorId    String       @db.ObjectId
+  authorName  String?      @db.String
+  authorImage String?      @db.String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Image {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  url       String
+  createdAt DateTime @default(now())
+}
+
+type LinkType {
+  id    String
+  label String
+}
+
+type IngredientType {
+  ingredient String
+  quantity   String?
+}
+
+enum RecipeStatus {
+  DRAFT
+  PUBLISHED
+}
+
+// 這段 Prisma schema 描述了一個用戶系統，包括用戶資訊、與帳戶的關聯以及用戶擁有的連結。使用 MongoDB 作為資料庫，並且設置了適當的關聯性和約束條件，以確保資料的完整性和一致性。
