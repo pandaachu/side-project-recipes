@@ -21,10 +21,10 @@ const geistMono = localFont({
   weight: '100 900',
 });
 
-interface RootLayoutProps {
+interface LayoutProps {
   children: React.ReactNode;
   auth: React.ReactNode;
-  admin?: React.ReactNode; // 使用可選參數
+  // admin?: React.ReactNode; // 使用可選參數
 }
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   description: 'Recipe',
 };
 
-export default async function RootLayout({ children, auth }: RootLayoutProps) {
+export default async function RootLayout({ children, auth }: LayoutProps) {
   const currentUser = await getCurrentUser();
 
   // const session = await getServerSession(currentUser);
