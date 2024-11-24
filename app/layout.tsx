@@ -24,7 +24,7 @@ const geistMono = localFont({
 interface RootLayoutProps {
   children: React.ReactNode;
   auth: React.ReactNode;
-  admin: React.ReactNode;
+  admin?: React.ReactNode; // 使用可選參數
 }
 
 export const metadata: Metadata = {
