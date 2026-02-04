@@ -16,9 +16,11 @@ export default function MemberRecipes() {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchRecipes = async () => {
+    debugger;
     try {
       const response = await axios.get('/api/member/recipes');
       setRecipes(response.data.recipes);
+      console.log(response.data.recipes, '>>>>>>>>>>response.data.recipes');
     } catch {
       message.error('載入食譜失敗');
     } finally {

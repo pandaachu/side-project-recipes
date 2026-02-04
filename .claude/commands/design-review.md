@@ -1,6 +1,6 @@
 # 設計審查
 
-根據 taikisato.com 的設計風格審查元件或頁面。
+根據 `.clinerules.md` 的設計風格審查元件或頁面。
 
 ## 審查標準
 
@@ -25,7 +25,6 @@
 ### 4. 動畫 (Animation)
 
 - [ ] 動畫是否微妙且有目的？
-- [ ] 是否使用 AOS 或 Framer Motion？
 - [ ] 動畫時長是否適當（200-500ms）？
 
 ### 5. 響應式 (Responsive)
@@ -60,6 +59,6 @@
 $ARGUMENTS
 
 請提供要審查的元件路徑或頁面名稱，例如：
-- `@components/sections/About.tsx`
+- `components/recipe/RecipeCard.tsx`
 - `首頁`
-- `projects/[slug] 頁面`
+- `recipes/[id] 頁面`

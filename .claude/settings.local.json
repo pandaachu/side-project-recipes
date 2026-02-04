@@ -5,14 +5,12 @@
       "Read",
       "Grep",
       "Glob",
-      "LS",
       "Bash(npm run:*)",
       "Bash(npm install:*)",
       "Bash(npx:*)",
+      "Bash(npx prisma:*)",
       "Bash(git:*)",
-      "Bash(cat:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
+      "Bash(docker:*)",
       "Write",
       "Edit",
       "MultiEdit"
@@ -32,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node C:\Users\Pandaa\Documents\coding\side-project-recipes/scripts/hooks/prevent-env-read.js"
+            "command": "node $PWD/scripts/hooks/prevent-env-read.js"
           }
         ]
       }
@@ -43,16 +41,14 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node C:\Users\Pandaa\Documents\coding\side-project-recipes/scripts/hooks/post-edit.js"
+            "command": "node $PWD/scripts/hooks/post-edit.js"
           },
           {
             "type": "command",
-            "command": "node C:\Users\Pandaa\Documents\coding\side-project-recipes/scripts/hooks/prevent-duplicate-query.js"
+            "command": "node $PWD/scripts/hooks/prevent-duplicate-query.js"
           }
         ]
       }
     ]
-  },
-  "model": "claude-sonnet-4-20250514",
-  "autoUpdatesChannel": "stable"
+  }
 }

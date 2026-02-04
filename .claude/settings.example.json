@@ -5,14 +5,12 @@
       "Read",
       "Grep",
       "Glob",
-      "LS",
       "Bash(npm run:*)",
       "Bash(npm install:*)",
       "Bash(npx:*)",
+      "Bash(npx prisma:*)",
       "Bash(git:*)",
-      "Bash(cat:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
+      "Bash(docker:*)",
       "Write",
       "Edit",
       "MultiEdit"
@@ -52,7 +50,5 @@
         ]
       }
     ]
-  },
-  "model": "claude-sonnet-4-20250514",
-  "autoUpdatesChannel": "stable"
+  }
 }
