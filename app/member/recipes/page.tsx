@@ -1,163 +1,140 @@
 'use client';
 
-import { ClockCircleOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-// import type { FormProps } from 'antd';
-import { Button, Form, Input, InputNumber, message, Select, Space } from 'antd';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { message, Modal, Spin } from 'antd';
 import axios from 'axios';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import ImageUpload from '@/components/ui/ImageUpload';
-const { Option } = Select;
+import { Recipe } from '@/types/recipe';
 
-interface RecipeFormValues {
-  title: string;
-  coverImage: string;
-  forPeople: string;
-  cookingTime: string;
-  ingredients: Array<object>;
-  steps: Array<string>;
-  tags: string;
-  refUrl: string;
-  cookingTool: string;
-  note: string;
-}
-export default function LoginPage() {
-  const [form] = Form.useForm<RecipeFormValues>();
+export default function MemberRecipes() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // upload
-  const [imageUrl, setImageUrl] = useState<string>('');
-  const handleUploadSuccess = (url: string) => {
-    setImageUrl(url);
-  };
-
-  const onFinish = async (values: RecipeFormValues) => {
-    console.log('🚀 ~ onFinish ~ values:', values);
-    setIsLoading(true);
+  const fetchRecipes = async () => {
     try {
-      const updateValues = { ...values, coverImage: imageUrl };
-      await axios.post('/api/recipes', updateValues);
-      message.success('成功');
-      router.push('/');
-    } catch (error: any) {
-      const errorMessage = error.response?.data || '失敗';
-      message.error(errorMessage);
+      const response = await axios.get('/api/member/recipes');
+      setRecipes(response.data.recipes);
+    } catch {
+      message.error('載入食譜失敗');
     } finally {
       setIsLoading(false);
     }
   };
-  return (
-    <div className="bg-grey-50 w-full">
-      <div className="flex items-center justify-center pt-6">
-        <Form className="w-full max-w-[400px]" form={form} onFinish={onFinish} layout="vertical">
-          <Form.Item label="標題" name="title" rules={[{ required: true, message: 'Please input!' }]}>
-            <Input />
-          </Form.Item>
 
-          <Form.Item label="圖片" name="coverImage">
-            <div>
-              <ImageUpload onUploadSuccess={handleUploadSuccess} />
-              {imageUrl && (
-                <div style={{ position: 'relative', width: '300px', height: '200px' }}>
-                  <Image src={imageUrl} alt="Uploaded" layout="fill" objectFit="contain" />
-                </div>
-              )}
-            </div>
-            {/* <Input /> */}
-          </Form.Item>
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
 
-          <Form.Item label="幾人份" name="forPeople" rules={[{ required: true, message: 'Please input!' }]}>
-            <Input addonAfter="人" />
-          </Form.Item>
+  const handleDelete = (recipeId: string, title: string) => {
+    Modal.confirm({
+      title: '確認刪除',
+      content: `確定要刪除「${title}」嗎？此操作無法復原。`,
+      okText: '刪除',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      async onOk() {
+        try {
+          await axios.delete(`/api/recipes/${recipeId}`);
+          message.success('食譜已刪除');
+          setRecipes((prev) => prev.filter((r) => r.id !== recipeId));
+        } catch {
+          message.error('刪除失敗');
+        }
+      },
+    });
+  };
 
-          <Form.Item label="烹調時間" name="cookingTime" rules={[{ required: true, message: 'Please input!' }]}>
-            <InputNumber addonBefore={<ClockCircleOutlined />} suffix="分鐘" style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item label="tags" name="tags">
-            <Select placeholder="請選擇">
-              <Option value="美式">美式</Option>
-              <Option value="中式">中式</Option>
-              <Option value="日式">日式</Option>
-              <Option value="韓式">韓式</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="烹調工具" name="cookingTool">
-            <Select placeholder="請選擇">
-              <Option value="鑄鐵鍋">鑄鐵鍋</Option>
-              <Option value="電鍋">電鍋</Option>
-              <Option value="電子鍋">電子鍋</Option>
-              <Option value="烤箱">烤箱</Option>
-              <Option value="微波爐">微波爐</Option>
-            </Select>
-          </Form.Item>
-
-          <div className="mb-8 rounded-md bg-zinc-50 p-4">
-            <Form.List name="ingredients">
-              {(fields, { add, remove }) => (
-                <>
-                  {fields.map(({ key, name, ...restField }) => (
-                    <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'ingredient']}
-                        rules={[{ required: true, message: 'Missing first name' }]}
-                      >
-                        <Input placeholder="食材" />
-                      </Form.Item>
-                      <Form.Item {...restField} name={[name, 'quantity']}>
-                        <Input placeholder="份量" />
-                      </Form.Item>
-                      <MinusCircleOutlined onClick={() => remove(name)} />
-                    </Space>
-                  ))}
-                  <Form.Item>
-                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                      Add 食材
-                    </Button>
-                  </Form.Item>
-                </>
-              )}
-            </Form.List>
-          </div>
-          <div className="mb-8 rounded-md bg-zinc-50 p-4">
-            <Form.List name="steps">
-              {(fields, { add, remove }) => (
-                <>
-                  {fields.map(({ key, name, ...restField }) => (
-                    <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                      <Form.Item {...restField} name={name} rules={[{ required: true, message: 'Missing' }]}>
-                        <Input placeholder="步驟" />
-                      </Form.Item>
-                      <MinusCircleOutlined onClick={() => remove(name)} />
-                    </Space>
-                  ))}
-                  <Form.Item>
-                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                      Add 步驟
-                    </Button>
-                  </Form.Item>
-                </>
-              )}
-            </Form.List>
-          </div>
-          <Form.Item label="參考網址" name="refUrl">
-            <Input />
-          </Form.Item>
-          <Form.Item label="補充" name="note">
-            <Input.TextArea />
-          </Form.Item>
-
-          <Form.Item>
-            <Button loading={isLoading} block type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Spin size="large" />
       </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-[1200px] px-6 py-16 md:px-12">
+      {/* Header */}
+      <div className="mb-12 flex items-end justify-between">
+        <div>
+          <h1 className="mb-2 text-3xl font-light tracking-wider">管理食譜</h1>
+          <span className="text-xs tracking-[3px] text-[#9E9E9E]">MY RECIPES</span>
+        </div>
+        <Link
+          href="/member/recipes/create"
+          className="border border-black bg-black px-6 py-2 text-sm tracking-[1px] text-white no-underline transition-all duration-300 hover:bg-[#424242]"
+        >
+          新增食譜
+        </Link>
+      </div>
+
+      {/* Recipe List */}
+      {recipes.length === 0 ? (
+        <div className="py-20 text-center">
+          <p className="mb-4 text-sm text-[#9E9E9E]">還沒有任何食譜</p>
+          <Link
+            href="/member/recipes/create"
+            className="border-b border-black pb-1 text-sm text-black no-underline transition-opacity duration-300 hover:opacity-60"
+          >
+            建立第一份食譜
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {recipes.map((recipe) => (
+            <article
+              key={recipe.id}
+              className="flex items-center gap-6 border border-[#EEEEEE] p-4 transition-all duration-300 hover:border-[#BDBDBD]"
+            >
+              {/* Thumbnail */}
+              <div
+                className="relative h-20 w-28 shrink-0 cursor-pointer overflow-hidden"
+                onClick={() => router.push(`/recipes/${recipe.id}`)}
+              >
+                <Image src={recipe.coverImage} alt={recipe.title} fill className="object-cover" sizes="112px" />
+              </div>
+
+              {/* Info */}
+              <div className="min-w-0 flex-1">
+                <h3
+                  className="mb-1 cursor-pointer truncate text-base font-medium transition-opacity duration-300 hover:opacity-60"
+                  onClick={() => router.push(`/recipes/${recipe.id}`)}
+                >
+                  {recipe.title}
+                </h3>
+                <div className="flex items-center gap-3 text-xs text-[#9E9E9E]">
+                  <span>{recipe.forPeople}人份</span>
+                  {recipe.cookingTime && <span>{recipe.cookingTime}分鐘</span>}
+                  {recipe.tags && <span>{recipe.tags}</span>}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex shrink-0 items-center gap-3">
+                <button
+                  onClick={() => router.push(`/member/recipes/${recipe.id}/edit`)}
+                  className="flex h-9 w-9 items-center justify-center border border-[#E0E0E0] bg-transparent text-[#616161] transition-all duration-300 hover:border-black hover:text-black"
+                  aria-label="編輯食譜"
+                >
+                  <EditOutlined />
+                </button>
+                <button
+                  onClick={() => handleDelete(recipe.id, recipe.title)}
+                  className="flex h-9 w-9 items-center justify-center border border-[#E0E0E0] bg-transparent text-[#616161] transition-all duration-300 hover:border-red-500 hover:text-red-500"
+                  aria-label="刪除食譜"
+                >
+                  <DeleteOutlined />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

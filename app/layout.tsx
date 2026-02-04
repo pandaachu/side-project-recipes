@@ -1,76 +1,66 @@
 import './globals.css';
 
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { ConfigProvider } from 'antd';
+import { App, ConfigProvider } from 'antd';
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
 
 import { getCurrentUser } from '@/actions/getCurrentUser';
 import Footer from '@/components/footer/Footer';
 import Header from '@/components/header/Header';
 import SessionAuthProvider from '@/context/providers/SessionAuthProvider';
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
-});
-
 interface LayoutProps {
   children: React.ReactNode;
   auth: React.ReactNode;
-  // admin?: React.ReactNode; // 使用可選參數
 }
 
 export const metadata: Metadata = {
-  title: 'Recipe',
-  description: 'Recipe',
+  title: '好好吃飯 | Recipe Collection',
+  description: '收集與分享美味食譜',
 };
 
 export default async function RootLayout({ children, auth }: LayoutProps) {
   const currentUser = await getCurrentUser();
 
-  // const session = await getServerSession(currentUser);
   return (
-    <html lang="en">
+    <html lang="zh-Hant">
       <ConfigProvider
         theme={{
           token: {
-            // Seed Token
-            colorPrimary: '#191919',
-
-            // Alias Token
-            // colorBgContainer: '#f6ffed',
-            colorText: '#1D1D1f',
-            colorTextHeading: '#1D1D1f',
-            colorTextBase: '#1D1D1f',
+            colorPrimary: '#000000',
+            colorText: '#000000',
+            colorTextHeading: '#000000',
+            colorTextBase: '#000000',
+            colorBorder: '#E0E0E0',
+            borderRadius: 0,
+            fontFamily:
+              "'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
           },
           components: {
             Button: {
-              // 移除按鈕陰影
               primaryShadow: 'none',
+              borderRadius: 0,
+            },
+            Input: {
+              borderRadius: 0,
+            },
+            Card: {
+              borderRadius: 0,
             },
           },
         }}
       >
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <body>
           <AntdRegistry>
-            <Header session={currentUser} />
-            <SessionAuthProvider session={currentUser}>
-              {/* 減除 header footer */}
-              <main
-                style={{ minHeight: 'calc(100vh - 110px)' }}
-                className="flex w-full items-center justify-center pt-[80px]"
-              >
-                {children} {auth}
-              </main>
-            </SessionAuthProvider>
-            <Footer />
+            <App>
+              <Header session={currentUser} />
+              <SessionAuthProvider session={currentUser}>
+                <main className="min-h-[calc(100vh-80px-80px)] w-full pt-[80px]">
+                  {children} {auth}
+                </main>
+              </SessionAuthProvider>
+              <Footer />
+            </App>
           </AntdRegistry>
         </body>
       </ConfigProvider>

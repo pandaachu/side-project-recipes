@@ -1,51 +1,50 @@
 'use client';
 
-import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Card } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { RecipeCardProps } from '@/types/recipe';
-const { Meta } = Card;
 
 const RecipeCard = ({ recipe }: RecipeCardProps) => {
   const router = useRouter();
 
-  const handleCardClick = () => {
-    router.push(`/recipes/${recipe.id}`);
-  };
-
   return (
-    <Card
-      hoverable
-      className="w-full cursor-pointer shadow-md"
-      onClick={handleCardClick}
-      cover={
-        <div className="relative h-48 w-full overflow-hidden">
-          <Image src={recipe.coverImage} alt={recipe.title} fill className="object-cover" />
-        </div>
-      }
-      actions={[
-        <SettingOutlined key="setting" onClick={(e) => e.stopPropagation()} />,
-        <EditOutlined key="edit" onClick={(e) => e.stopPropagation()} />,
-        <EllipsisOutlined key="ellipsis" onClick={(e) => e.stopPropagation()} />,
-      ]}
+    <article
+      className="group cursor-pointer border border-[#EEEEEE] bg-white transition-all duration-[400ms] hover:-translate-y-1 hover:border-black hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]"
+      style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
+      onClick={() => router.push(`/recipes/${recipe.id}`)}
     >
-      <Meta
-        avatar={<Avatar src={recipe.authorImage || 'https://api.dicebear.com/7.x/miniavs/svg?seed=8'} />}
-        title={recipe.title}
-        description={
-          <div className="space-y-2">
-            <div className="text-gray-500">
-              <span>👥 {recipe.forPeople}人份</span>
-              {recipe.cookingTime && <span className="ml-4">⏰ {recipe.cookingTime}分鐘</span>}
-            </div>
-            {recipe.tags && <div className="text-gray-500">🏷️ {recipe.tags}</div>}
-            <div className="text-sm text-gray-500">作者：{recipe.authorName || '匿名'}</div>
+      <div className="relative aspect-[16/10] w-full overflow-hidden">
+        <Image
+          src={recipe.coverImage}
+          alt={recipe.title}
+          fill
+          className="object-cover transition-transform duration-[600ms] group-hover:scale-105"
+          style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        />
+      </div>
+      <div className="p-6">
+        <div className="mb-2 text-xs text-[#9E9E9E]">{recipe.authorName || '匿名'}</div>
+        <h3 className="mb-4 text-xl font-medium text-black">{recipe.title}</h3>
+        <div className="mb-4 flex items-center gap-4 text-sm text-[#757575]">
+          <span>{recipe.forPeople}人份</span>
+          {recipe.cookingTime && <span>{recipe.cookingTime}分鐘</span>}
+        </div>
+        {recipe.tags && (
+          <div className="flex flex-wrap gap-2">
+            {recipe.tags.split(',').map((tag, index) => (
+              <span
+                key={index}
+                className="border border-[#E0E0E0] px-3 py-1 text-[11px] tracking-[0.5px] text-[#757575]"
+              >
+                {tag.trim()}
+              </span>
+            ))}
           </div>
-        }
-      />
-    </Card>
+        )}
+      </div>
+    </article>
   );
 };
 

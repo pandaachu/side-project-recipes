@@ -76,7 +76,7 @@ model Recipe {
   cookingTool String?      @db.String
   refUrl      String?      @db.String
   note        String?      @db.String
-  status      RecipeStatus @default(DRAFT)
+  status      RecipeStatus @default(PUBLISHED)
   author      User         @relation(fields: [authorId], references: [id])
   authorId    String       @db.ObjectId
   authorName  String?      @db.String

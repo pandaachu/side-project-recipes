@@ -1,0 +1,58 @@
+{
+  "$schema": "https://code.claude.com/settings-schema.json",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "LS",
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(npx:*)",
+      "Bash(git:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Write",
+      "Edit",
+      "MultiEdit"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Read(.env*)",
+      "Edit(.env*)",
+      "Write(.env*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node C:\Users\Pandaa\Documents\coding\side-project-recipes/scripts/hooks/prevent-env-read.js"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node C:\Users\Pandaa\Documents\coding\side-project-recipes/scripts/hooks/post-edit.js"
+          },
+          {
+            "type": "command",
+            "command": "node C:\Users\Pandaa\Documents\coding\side-project-recipes/scripts/hooks/prevent-duplicate-query.js"
+          }
+        ]
+      }
+    ]
+  },
+  "model": "claude-sonnet-4-20250514",
+  "autoUpdatesChannel": "stable"
+}

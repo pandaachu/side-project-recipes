@@ -11,7 +11,10 @@ export interface Recipe {
   steps: string[];
   tags: string | null;
   cookingTool: string | null;
+  refUrl: string | null;
   note: string | null;
+  status: 'DRAFT' | 'PUBLISHED';
+  authorId: string;
   authorImage: string | null;
   authorName: string | null;
   createdAt: string;

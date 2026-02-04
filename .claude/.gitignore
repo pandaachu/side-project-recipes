@@ -1,0 +1,8 @@
+# Claude Code 本地設定（不提交到版本控制）
+.claude/settings.local.json
+
+# 保留以下檔案到版本控制：
+# .claude/settings.json        - 團隊共享設定
+# .claude/settings.example.json - 設定範本
+# .claude/commands/            - 自訂命令
+# CLAUDE.md                    - 專案文件

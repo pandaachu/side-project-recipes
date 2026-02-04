@@ -54,7 +54,7 @@ export async function POST(request: Request) {
         authorId: currentUser.id,
         authorName: currentUser.name,
         authorImage: currentUser.image,
-        // status: 'DRAFT',
+        status: 'PUBLISHED',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -145,7 +145,7 @@ export async function GET() {
   try {
     const recipes = await prisma.recipe.findMany({
       where: {
-        status: RecipeStatus.DRAFT,
+        status: RecipeStatus.PUBLISHED,
       },
       include: {
         author: {
