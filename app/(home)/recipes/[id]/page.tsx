@@ -3,24 +3,25 @@
 import { message, Spin } from 'antd';
 import axios from 'axios';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 import { Recipe } from '@/types/recipe';
 
 interface RecipeDetailProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const RecipeDetail = ({ params }: RecipeDetailProps) => {
+  const { id } = use(params);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await axios.get(`/api/recipes/${params.id}`);
+        const response = await axios.get(`/api/recipes/${id}`);
         setRecipe(response.data);
       } catch (error: any) {
         if (axios.isAxiosError(error)) {
@@ -37,7 +38,7 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
       }
     };
     fetchRecipe();
-  }, [params.id]);
+  }, [id]);
 
   if (isLoading) {
     return (

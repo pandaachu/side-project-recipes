@@ -41,7 +41,7 @@ npx prisma validate
 確認以下環境變數已在 Vercel 設定：
 
 - `DATABASE_URL` - MongoDB 連線字串
-- `NEXTAUTH_SECRET` - NextAuth 密鑰
+- `NEXTAUTH_SECRET` / `AUTH_SECRET` - Auth.js 密鑰
 - `NEXTAUTH_URL` - 應用程式 URL
 - `GOOGLE_CLIENT_ID` / `GOOGLE_SECRET` - Google OAuth
 - `FACEBOOK_CLIENT_ID` / `FACEBOOK_CLIENT_SECRET` - Facebook OAuth

@@ -14,6 +14,8 @@ interface LayoutProps {
   auth: React.ReactNode;
 }
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: '好好吃飯 | Recipe Collection',
   description: '收集與分享美味食譜',

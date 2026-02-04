@@ -4,11 +4,12 @@ import { z } from 'zod';
 import { getCurrentUser } from '@/actions/getCurrentUser';
 import prisma from '@/libs/prismadb';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const recipe = await prisma.recipe.findUnique({
       where: {
-        id: params.id,
+        id,
       },
       include: {
         author: {
@@ -49,13 +50,14 @@ const updateValidate = z.object({
   refUrl: z.string().nullable().optional(),
 });
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const currentUser = await getCurrentUser();
     if (!currentUser) return new NextResponse('Unauthorized', { status: 401 });
 
     const recipe = await prisma.recipe.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!recipe) {
@@ -75,7 +77,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     const updatedRecipe = await prisma.recipe.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...result.data,
         updatedAt: new Date(),
@@ -92,13 +94,14 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const currentUser = await getCurrentUser();
     if (!currentUser) return new NextResponse('Unauthorized', { status: 401 });
 
     const recipe = await prisma.recipe.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!recipe) {
@@ -110,7 +113,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.recipe.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: 'Recipe deleted successfully' });

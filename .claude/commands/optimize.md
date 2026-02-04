@@ -1,6 +1,6 @@
 # 效能優化檢查
 
-分析專案並提供 Next.js 14 效能優化建議。
+分析專案並提供 Next.js 15 效能優化建議。
 
 ## 檢查項目
 
@@ -22,7 +22,7 @@
 
 ### 4. CSS 最佳化
 
-- 確認 Tailwind CSS 3 正確配置
+- 確認 Tailwind CSS 4 正確配置（CSS-first config in globals.css）
 - 檢查是否有未使用的 CSS 類別
 - 確認 Ant Design 的按需載入
 

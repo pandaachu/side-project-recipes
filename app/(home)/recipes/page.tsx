@@ -20,7 +20,6 @@ const PublicRecipes = () => {
       try {
         const response = await axios.get('/api/recipes');
         setRecipes(response.data.recipes);
-        console.log(response.data.recipes, '>>>>>>>>>>response.data.recipes');
       } catch (error: any) {
         const errorMessage = error.response?.data || '載入食譜失敗';
         message.error(errorMessage);

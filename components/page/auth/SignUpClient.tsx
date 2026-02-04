@@ -35,14 +35,12 @@ export default function SignUpClient() {
     }
   };
 
-  const handleSocialSignUp = (socialType: string) => {
-    signIn(socialType, { callbackUrl: '/' }).then((callback) => {
-      if (callback?.ok) {
-        message.success('註冊成功');
-      } else {
-        message.error('註冊失敗');
-      }
-    });
+  const handleSocialSignUp = async (socialType: string) => {
+    try {
+      await signIn(socialType, { callbackUrl: '/' });
+    } catch {
+      message.error('註冊失敗');
+    }
   };
 
   return (

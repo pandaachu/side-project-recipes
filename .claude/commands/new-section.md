@@ -36,7 +36,7 @@ export function [SectionName]({ ...props }: [SectionName]Props) {
 1. 在 `components/page/` 或 `components/recipe/` 建立新元件
 2. 遵循現有元件的命名和結構慣例
 3. 添加適當的 TypeScript 型別
-4. 使用 Tailwind CSS 3 語法
+4. 使用 Tailwind CSS 4 語法
 
 ## 參數
 

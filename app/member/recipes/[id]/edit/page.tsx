@@ -2,25 +2,26 @@
 
 import { message, Spin } from 'antd';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 import RecipeForm from '@/components/recipe/RecipeForm';
 import { Recipe } from '@/types/recipe';
 
 interface EditRecipePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditRecipePage({ params }: EditRecipePageProps) {
+  const { id } = use(params);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await axios.get(`/api/recipes/${params.id}`);
+        const response = await axios.get(`/api/recipes/${id}`);
         setRecipe(response.data);
       } catch {
         message.error('載入食譜失敗');
@@ -29,7 +30,7 @@ export default function EditRecipePage({ params }: EditRecipePageProps) {
       }
     };
     fetchRecipe();
-  }, [params.id]);
+  }, [id]);
 
   if (isLoading) {
     return (
