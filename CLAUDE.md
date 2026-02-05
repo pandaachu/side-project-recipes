@@ -4,9 +4,9 @@
 
 ## 技術棧
 
-- **Framework**: Next.js 15 (App Router, React 19)
+- **Framework**: Next.js 16 (App Router, React 19, Turbopack)
 - **Language**: TypeScript 5.9
-- **Database**: MongoDB + Prisma 5 ORM
+- **Database**: MongoDB + Prisma 6 ORM
 - **Auth**: Auth.js v5 / next-auth 5 (Google, Facebook, GitHub, LINE, Credentials)
 - **Styling**: Tailwind CSS 4 (CSS-first config) + Ant Design 5
 - **Image Upload**: Cloudinary (next-cloudinary)
@@ -44,7 +44,7 @@ scripts/                # 工具腳本與 hooks
 ```bash
 npm run dev             # 啟動開發伺服器 (port 3000)
 npm run build           # 建置專案
-npm run lint            # ESLint 檢查
+npm run lint            # ESLint 檢查（eslint .，Next.js 16 移除了 next lint）
 npm run prettier        # 格式化程式碼
 npx prisma studio       # Prisma 資料庫 GUI
 npx prisma generate     # 產生 Prisma Client
@@ -87,6 +87,8 @@ npx prisma generate     # 產生 Prisma Client
 - **Prisma Client** 使用 `libs/prismadb.ts` 的共用單例，不要自行 `new PrismaClient()`
 - **圖片上傳** 統一使用 Cloudinary，透過 `next-cloudinary` 元件
 - **認證** 使用 Auth.js v5，完整設定在 `libs/auth.ts`，Edge-compatible 設定在 `libs/auth.config.ts`
-- **Middleware** 使用 `libs/auth.config.ts`（不含 Prisma/bcrypt，相容 Edge Runtime）
+- **Middleware** 使用 `libs/auth.config.ts`（不含 Prisma/bcrypt，相容 Edge Runtime）。Next.js 16 建議改用 `proxy.ts`，但因 Auth.js 需 Edge Runtime，暫保留 `middleware.ts`
+- **ESLint** 使用 Flat Config（`eslint.config.mjs`），ESLint 9 + `eslint-config-next` v16
+- **Turbopack** 為 Next.js 16 預設 bundler，開發和建置均使用
 - **Tailwind v4** 使用 CSS-first 設定（`globals.css` 中的 `@theme` 取代 `tailwind.config.ts`），搭配 `@layer` 排序解決 Ant Design 衝突
 - **部署** 使用 `prisma generate && next build`（Vercel）
