@@ -23,6 +23,19 @@ test.describe('Public Recipe List', () => {
     await expect(chip).toHaveAttribute('aria-pressed', 'false');
   });
 
+  test('should render sort options and fridge mode toggle', async ({ page }) => {
+    for (const label of ['最新', '最常煮', '評分最高']) {
+      await expect(page.getByRole('button', { name: label })).toBeVisible();
+    }
+    const fridgeToggle = page.getByRole('button', { name: /冰箱模式/ });
+    await expect(fridgeToggle).toBeVisible();
+
+    // Enabling fridge mode shows the ingredient input and hides sort options
+    await fridgeToggle.click();
+    await expect(page.getByPlaceholder(/輸入手邊食材/)).toBeVisible();
+    await expect(page.getByRole('button', { name: '最新' })).toHaveCount(0);
+  });
+
   test('root should redirect to /recipes', async ({ page }) => {
     await page.goto('/');
     await page.waitForURL('/recipes');

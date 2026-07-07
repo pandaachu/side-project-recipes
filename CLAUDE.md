@@ -12,7 +12,8 @@
     → scripts/import-recipe.ts → MongoDB
 
 瀏覽流程:
-  MongoDB → /api/recipes → app/(home)/recipes（公開，含器具篩選 + 食材搜尋）
+  MongoDB → /api/recipes → app/(home)/recipes（公開，含器具篩選 + 食材搜尋 + 冰箱模式）
+  詳情頁：YouTube 內嵌、人份換算、購物清單、煮過記錄（登入限定）
   管理（新增/編輯/刪除）→ /member/*（需 Google 登入 + 白名單）
 ```
 
@@ -57,11 +58,25 @@ tests/e2e/               # Playwright 測試
 ## 資料模型（Recipe 重點欄位）
 
 - `title`, `coverImage`（**選填**，IG/FB 匯入常無圖 → UI 顯示 placeholder）
-- `ingredients`: `[{ ingredient, quantity }]`（食材搜尋的資料來源）
+- `ingredients`: `[{ ingredient, quantity }]`（食材搜尋 / 冰箱模式 / 購物清單的資料來源）
 - `cookingTools`: `String[]`（**多選**，值限 `constants/recipe.ts` 的 `COOKING_TOOLS`）
 - `tags`: 逗號分隔字串（分類：美式/中式/日式…）
-- `refUrl`: 原始影片/貼文網址（匯入時的重複偵測 key；UI 據此顯示來源 badge）
+- `refUrl`: 原始影片/貼文網址（匯入去重 key；來源 badge 與 YouTube 內嵌都由此推導）
 - `status`: DRAFT | PUBLISHED
+- 料理記錄（全 optional，null 視為 0/無）：`rating`（1-5）、`cookCount`、`lastCookedAt`、`cookLogs`（`[{ cookedAt, rating?, note? }]`，經 `POST /api/recipes/[id]/cook` 寫入）
+
+## 前端功能對照
+
+| 功能 | 位置 | 關鍵檔案 |
+|------|------|---------|
+| 器具篩選 / 排序（最新/最常煮/評分） | 列表頁 | `app/(home)/recipes/page.tsx` |
+| 冰箱模式（食材覆蓋率排序） | 列表頁 | `libs/fridgeMatch.ts` |
+| YouTube 內嵌播放 | 詳情頁 | `libs/recipeSource.ts` `getYouTubeVideoId()` |
+| 人份換算 | 詳情頁 | `libs/quantity.ts` `scaleQuantity()` |
+| 煮過記錄（星等+心得） | 詳情頁（登入限定） | `components/recipe/CookLogButton.tsx` + cook API |
+| 購物清單 | `/shopping-list` | `libs/shoppingList.ts`（useSyncExternalStore 模式） |
+
+**localStorage keys**：`fridge-ingredients`（冰箱食材）、`shopping-list`（購物清單）— 皆單機持久化，無後端同步
 
 ## 常用指令
 
@@ -112,3 +127,5 @@ npx tsx scripts/import-recipe.ts <json>   # 手動匯入食譜
 - app 內建匯入頁（`/member/recipes/import`，oEmbed 自動帶入）— 目前由 /import-recipe 覆蓋
 - 器具篩選改 server-side（資料量大時）
 - antd → React 19 正式相容（@ant-design/v5-patch-for-react-19）
+- 煮飯模式 Cook Mode（步驟全螢幕 + Wake Lock）
+- 今晚吃什麼（隨機推薦）、PWA 手機安裝
