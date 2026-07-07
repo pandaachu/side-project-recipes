@@ -36,6 +36,12 @@ const Header = ({ session }: HeaderProps) => {
           >
             食譜一覽
           </Link>
+          <Link
+            href="/shopping-list"
+            className="text-sm tracking-[0.5px] text-black no-underline transition-opacity duration-300 hover:opacity-60"
+          >
+            購物清單
+          </Link>
           {session ? (
             <>
               <Link
@@ -87,6 +93,13 @@ const Header = ({ session }: HeaderProps) => {
             className="text-lg tracking-[2px] text-black no-underline transition-opacity duration-300 hover:opacity-60"
           >
             食譜一覽
+          </Link>
+          <Link
+            href="/shopping-list"
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-lg tracking-[2px] text-black no-underline transition-opacity duration-300 hover:opacity-60"
+          >
+            購物清單
           </Link>
           {session ? (
             <>

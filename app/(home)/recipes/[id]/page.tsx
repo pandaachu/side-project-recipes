@@ -10,6 +10,7 @@ import CookLogButton from '@/components/recipe/CookLogButton';
 import SourceBadge from '@/components/ui/SourceBadge';
 import { scaleQuantity } from '@/libs/quantity';
 import { getYouTubeVideoId } from '@/libs/recipeSource';
+import { addToShoppingList } from '@/libs/shoppingList';
 import { Recipe } from '@/types/recipe';
 
 interface RecipeDetailProps {
@@ -185,6 +186,24 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
               </li>
             ))}
           </ul>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={() => {
+                // Add currently displayed (scaled) quantities
+                addToShoppingList(
+                  recipe.title,
+                  recipe.ingredients.map((item) => ({
+                    ingredient: item.ingredient,
+                    quantity: scaleQuantity(item.quantity, ratio),
+                  })),
+                );
+                message.success('已加入購物清單');
+              }}
+              className="border border-[#E0E0E0] bg-transparent px-4 py-2 text-xs tracking-[1px] text-[#616161] transition-all duration-300 hover:border-black hover:text-black"
+            >
+              ＋ 加入購物清單
+            </button>
+          </div>
         </section>
       )}
 
