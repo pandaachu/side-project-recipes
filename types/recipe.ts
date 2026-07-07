@@ -33,4 +33,6 @@ export interface Recipe {
 
 export interface RecipeCardProps {
   recipe: Recipe;
+  // Fridge mode: missing ingredient names; undefined when fridge mode is off
+  fridgeMissing?: string[];
 }

@@ -7,7 +7,7 @@ import SourceBadge from '@/components/ui/SourceBadge';
 import ToolChips from '@/components/ui/ToolChips';
 import { RecipeCardProps } from '@/types/recipe';
 
-const RecipeCard = ({ recipe }: RecipeCardProps) => {
+const RecipeCard = ({ recipe, fridgeMissing }: RecipeCardProps) => {
   const router = useRouter();
 
   return (
@@ -43,6 +43,17 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
           {recipe.cookingTime && <span>{recipe.cookingTime}分鐘</span>}
           {recipe.rating && <span className="text-black">★ {recipe.rating}</span>}
         </div>
+        {fridgeMissing !== undefined && (
+          <div className="mb-4 text-xs">
+            {fridgeMissing.length === 0 ? (
+              <span className="text-black">✓ 食材齊全</span>
+            ) : (
+              <span className="text-[#9E9E9E]">
+                缺 {fridgeMissing.length} 樣：{fridgeMissing.join('、')}
+              </span>
+            )}
+          </div>
+        )}
         <div className="flex flex-wrap items-center gap-2">
           {recipe.tags &&
             recipe.tags.split(',').map((tag, index) => (
