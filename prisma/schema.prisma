@@ -16,7 +16,7 @@ datasource db {
 // id: 用戶的唯一識別碼，使用 MongoDB 的 ObjectId。
 // name, username, email: 可選的屬性，username 和 email 為唯一。
 // emailVerified, createdAt, updatedAt: 記錄與用戶相關的時間資訊。
-// accounts 和 links: 與 Account 和 Link 模型的一對多關係。
+// accounts 和 recipes: 與 Account 和 Recipe 模型的一對多關係。
 model User {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
@@ -88,11 +88,6 @@ model Image {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   url       String
   createdAt DateTime @default(now())
-}
-
-type LinkType {
-  id    String
-  label String
 }
 
 type IngredientType {
