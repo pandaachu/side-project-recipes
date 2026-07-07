@@ -97,7 +97,13 @@ export default function MemberRecipes() {
                 className="relative h-20 w-28 shrink-0 cursor-pointer overflow-hidden"
                 onClick={() => router.push(`/recipes/${recipe.id}`)}
               >
-                <Image src={recipe.coverImage} alt={recipe.title} fill className="object-cover" sizes="112px" />
+                {recipe.coverImage ? (
+                  <Image src={recipe.coverImage} alt={recipe.title} fill className="object-cover" sizes="112px" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-[#F5F5F5]">
+                    <span className="text-[9px] tracking-[2px] text-[#BDBDBD]">NO IMAGE</span>
+                  </div>
+                )}
               </div>
 
               {/* Info */}

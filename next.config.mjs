@@ -13,6 +13,8 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      // YouTube video thumbnails (imported recipes hotlink these)
+      { protocol: 'https', hostname: 'i.ytimg.com' },
     ],
   },
 };

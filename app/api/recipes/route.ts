@@ -14,11 +14,7 @@ const validate = z.object({
   title: z.string({
     required_error: '缺少標題',
   }),
-  coverImage: z
-    .string({
-      required_error: '缺少圖片',
-    })
-    .url('請輸入正確的圖片網址'),
+  coverImage: z.string().url('請輸入正確的圖片網址').optional(),
   forPeople: z.string({
     required_error: '缺少幾人份',
   }),

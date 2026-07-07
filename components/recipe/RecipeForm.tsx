@@ -48,7 +48,7 @@ export default function RecipeForm({ initialData, mode }: RecipeFormProps) {
         refUrl: initialData.refUrl || undefined,
         note: initialData.note || undefined,
       });
-      setImageUrl(initialData.coverImage);
+      setImageUrl(initialData.coverImage || '');
     }
   }, [initialData, form]);
 
@@ -57,13 +57,10 @@ export default function RecipeForm({ initialData, mode }: RecipeFormProps) {
   };
 
   const onFinish = async (values: RecipeFormValues) => {
-    if (!imageUrl) {
-      message.error('請上傳食譜圖片');
-      return;
-    }
     setIsLoading(true);
     try {
-      const payload = { ...values, coverImage: imageUrl };
+      // Cover image is optional (IG/FB imports often have no image)
+      const payload = { ...values, coverImage: imageUrl || undefined };
       if (mode === 'edit' && initialData) {
         await axios.put(`/api/recipes/${initialData.id}`, payload);
         message.success('食譜已更新');

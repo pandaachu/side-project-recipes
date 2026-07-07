@@ -46,3 +46,6 @@ node_modules/
 
 # claude
 CLAUDE.local.md
+
+# recipe import draft (created by /import-recipe, deleted after import)
+.import-draft.json

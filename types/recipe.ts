@@ -1,7 +1,7 @@
 export interface Recipe {
   id: string;
   title: string;
-  coverImage: string;
+  coverImage: string | null;
   forPeople: string;
   cookingTime: number | null;
   ingredients: Array<{

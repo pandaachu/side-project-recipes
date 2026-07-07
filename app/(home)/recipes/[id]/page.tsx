@@ -64,17 +64,19 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
         <p className="text-sm text-[#9E9E9E]">{recipe.authorName || '匿名'}</p>
       </div>
 
-      {/* Cover Image */}
-      <div className="relative mb-12 aspect-[16/10] w-full overflow-hidden">
-        <Image
-          src={recipe.coverImage}
-          alt={recipe.title}
-          fill
-          className="object-cover"
-          priority
-          sizes="(max-width: 768px) 100vw, 768px"
-        />
-      </div>
+      {/* Cover Image (optional — imported IG/FB recipes may have none) */}
+      {recipe.coverImage && (
+        <div className="relative mb-12 aspect-[16/10] w-full overflow-hidden">
+          <Image
+            src={recipe.coverImage}
+            alt={recipe.title}
+            fill
+            className="object-cover"
+            priority
+            sizes="(max-width: 768px) 100vw, 768px"
+          />
+        </div>
+      )}
 
       {/* Info Bar */}
       <div className="mb-12 flex items-center justify-center gap-8 border-y border-[#EEEEEE] py-6">

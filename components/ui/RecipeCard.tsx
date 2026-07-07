@@ -15,14 +15,20 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
       onClick={() => router.push(`/recipes/${recipe.id}`)}
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden">
-        <Image
-          src={recipe.coverImage}
-          alt={recipe.title}
-          fill
-          className="object-cover transition-transform duration-[600ms] group-hover:scale-105"
-          style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        />
+        {recipe.coverImage ? (
+          <Image
+            src={recipe.coverImage}
+            alt={recipe.title}
+            fill
+            className="object-cover transition-transform duration-[600ms] group-hover:scale-105"
+            style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-[#F5F5F5]">
+            <span className="text-xs tracking-[3px] text-[#BDBDBD]">NO IMAGE</span>
+          </div>
+        )}
       </div>
       <div className="p-6">
         <div className="mb-2 text-xs text-[#9E9E9E]">{recipe.authorName || '匿名'}</div>
