@@ -1,3 +1,9 @@
+export interface CookLog {
+  cookedAt: string;
+  rating?: number;
+  note?: string;
+}
+
 export interface Recipe {
   id: string;
   title: string;
@@ -13,6 +19,10 @@ export interface Recipe {
   cookingTools: string[];
   refUrl: string | null;
   note: string | null;
+  rating: number | null;
+  cookCount: number | null;
+  lastCookedAt: string | null;
+  cookLogs: CookLog[] | null;
   status: 'DRAFT' | 'PUBLISHED';
   authorId: string;
   authorImage: string | null;

@@ -10,11 +10,20 @@ import { Recipe } from '@/types/recipe';
 
 const RecipeCard = lazy(() => import('@/components/ui/RecipeCard'));
 
+type SortOption = 'latest' | 'mostCooked' | 'topRated';
+
+const SORT_OPTIONS: Array<{ value: SortOption; label: string }> = [
+  { value: 'latest', label: '最新' },
+  { value: 'mostCooked', label: '最常煮' },
+  { value: 'topRated', label: '評分最高' },
+];
+
 const PublicRecipes = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>('latest');
 
   useEffect(() => {
     const fetchList = async () => {
@@ -41,7 +50,7 @@ const PublicRecipes = () => {
   };
 
   const filteredRecipes = useMemo(() => {
-    return recipes.filter((recipe) => {
+    const filtered = recipes.filter((recipe) => {
       // Equipment filter: match any selected tool (OR within tools)
       if (selectedTools.length > 0) {
         const toolMatch = recipe.cookingTools?.some((tool) => selectedTools.includes(tool));
@@ -57,7 +66,13 @@ const PublicRecipes = () => {
       }
       return true;
     });
-  }, [recipes, searchKeyword, selectedTools]);
+
+    return [...filtered].sort((a, b) => {
+      if (sortBy === 'mostCooked') return (b.cookCount ?? 0) - (a.cookCount ?? 0);
+      if (sortBy === 'topRated') return (b.rating ?? 0) - (a.rating ?? 0);
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [recipes, searchKeyword, selectedTools, sortBy]);
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-6 py-16 md:px-12">
@@ -73,7 +88,7 @@ const PublicRecipes = () => {
       </div>
 
       {/* Equipment Filter Chips */}
-      <div className="mb-12 flex flex-wrap justify-center gap-2">
+      <div className="mb-6 flex flex-wrap justify-center gap-2">
         {COOKING_TOOLS.map((tool) => {
           const isActive = selectedTools.includes(tool);
           return (
@@ -91,6 +106,23 @@ const PublicRecipes = () => {
             </button>
           );
         })}
+      </div>
+
+      {/* Sort Control */}
+      <div className="mb-12 flex justify-center gap-6">
+        {SORT_OPTIONS.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => setSortBy(option.value)}
+            className={`bg-transparent pb-1 text-xs tracking-[1px] transition-all duration-300 ${
+              sortBy === option.value
+                ? 'border-b border-black text-black'
+                : 'border-b border-transparent text-[#9E9E9E] hover:text-black'
+            }`}
+          >
+            {option.label}
+          </button>
+        ))}
       </div>
 
       {/* Loading */}

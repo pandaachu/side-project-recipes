@@ -3,8 +3,10 @@
 import { message, Spin } from 'antd';
 import axios from 'axios';
 import Image from 'next/image';
-import { use, useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { use, useCallback, useEffect, useState } from 'react';
 
+import CookLogButton from '@/components/recipe/CookLogButton';
 import SourceBadge from '@/components/ui/SourceBadge';
 import { Recipe } from '@/types/recipe';
 
@@ -16,30 +18,32 @@ interface RecipeDetailProps {
 
 const RecipeDetail = ({ params }: RecipeDetailProps) => {
   const { id } = use(params);
+  const { data: session } = useSession();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        const response = await axios.get(`/api/recipes/${id}`);
-        setRecipe(response.data);
-      } catch (error: any) {
-        if (axios.isAxiosError(error)) {
-          if (error.response?.status === 404) {
-            message.error('找不到該食譜');
-          } else {
-            message.error(error.response?.data || '載入食譜失敗');
-          }
+  const fetchRecipe = useCallback(async () => {
+    try {
+      const response = await axios.get(`/api/recipes/${id}`);
+      setRecipe(response.data);
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          message.error('找不到該食譜');
         } else {
-          message.error('發生未知錯誤');
+          message.error(error.response?.data || '載入食譜失敗');
         }
-      } finally {
-        setIsLoading(false);
+      } else {
+        message.error('發生未知錯誤');
       }
-    };
-    fetchRecipe();
+    } finally {
+      setIsLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => {
+    fetchRecipe();
+  }, [fetchRecipe]);
 
   if (isLoading) {
     return (
@@ -97,7 +101,26 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
             <p className="text-lg font-light">{recipe.cookingTools.join('、')}</p>
           </div>
         )}
+        {recipe.rating && (
+          <div className="text-center">
+            <p className="mb-1 text-xs tracking-[1px] text-[#9E9E9E]">評分</p>
+            <p className="text-lg font-light">★ {recipe.rating}</p>
+          </div>
+        )}
+        {(recipe.cookCount ?? 0) > 0 && (
+          <div className="text-center">
+            <p className="mb-1 text-xs tracking-[1px] text-[#9E9E9E]">煮過</p>
+            <p className="text-lg font-light">{recipe.cookCount} 次</p>
+          </div>
+        )}
       </div>
+
+      {/* Cook Log Button (owner only) */}
+      {session && (
+        <div className="mb-12 flex justify-center">
+          <CookLogButton recipeId={recipe.id} onLogged={fetchRecipe} />
+        </div>
+      )}
 
       {/* Ingredients */}
       {recipe.ingredients && recipe.ingredients.length > 0 && (
@@ -145,6 +168,27 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
             <span className="text-[10px] tracking-[2px] text-[#9E9E9E]">NOTE</span>
           </div>
           <p className="text-sm leading-relaxed text-[#616161]">{recipe.note}</p>
+        </section>
+      )}
+
+      {/* Cook Logs */}
+      {recipe.cookLogs && recipe.cookLogs.length > 0 && (
+        <section className="mb-12">
+          <div className="mb-6">
+            <h2 className="text-base font-medium">料理記錄</h2>
+            <span className="text-[10px] tracking-[2px] text-[#9E9E9E]">COOK LOG</span>
+          </div>
+          <ul className="divide-y divide-[#F5F5F5]">
+            {[...recipe.cookLogs].reverse().map((log, index) => (
+              <li key={index} className="py-3">
+                <div className="flex items-center gap-3 text-xs text-[#9E9E9E]">
+                  <span>{new Date(log.cookedAt).toLocaleDateString('zh-TW')}</span>
+                  {log.rating && <span className="text-black">★ {log.rating}</span>}
+                </div>
+                {log.note && <p className="mt-1 text-sm leading-relaxed text-[#616161]">{log.note}</p>}
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

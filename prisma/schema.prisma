@@ -75,6 +75,11 @@ model Recipe {
   cookingTools String[] @default([])
   refUrl      String?      @db.String
   note        String?      @db.String
+  // Cooking history (all optional — old documents read fine without them)
+  rating       Int? // 1-5, latest rating given when logging a cook
+  cookCount    Int? // times cooked (null = 0)
+  lastCookedAt DateTime?
+  cookLogs     Json? // [{ cookedAt: ISO string, rating?: number, note?: string }]
   status      RecipeStatus @default(PUBLISHED)
   author      User         @relation(fields: [authorId], references: [id])
   authorId    String       @db.ObjectId

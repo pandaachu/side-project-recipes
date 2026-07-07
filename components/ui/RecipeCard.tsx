@@ -41,6 +41,7 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
         <div className="mb-4 flex items-center gap-4 text-sm text-[#757575]">
           <span>{recipe.forPeople}人份</span>
           {recipe.cookingTime && <span>{recipe.cookingTime}分鐘</span>}
+          {recipe.rating && <span className="text-black">★ {recipe.rating}</span>}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {recipe.tags &&
