@@ -53,20 +53,12 @@ const Header = ({ session }: HeaderProps) => {
               </button>
             </>
           ) : (
-            <>
-              <Link
-                href="/login"
-                className="text-sm tracking-[0.5px] text-black no-underline transition-opacity duration-300 hover:opacity-60"
-              >
-                登入
-              </Link>
-              <Link
-                href="/signup"
-                className="border border-black bg-black px-6 py-2 text-sm tracking-[1px] text-white no-underline transition-all duration-300 hover:bg-[#424242]"
-              >
-                開始使用
-              </Link>
-            </>
+            <Link
+              href="/login"
+              className="text-sm tracking-[0.5px] text-black no-underline transition-opacity duration-300 hover:opacity-60"
+            >
+              登入
+            </Link>
           )}
         </nav>
 
@@ -83,7 +75,7 @@ const Header = ({ session }: HeaderProps) => {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed right-0 top-0 z-[999] h-screen w-full bg-white transition-transform duration-[400ms] md:hidden ${
+        className={`fixed top-0 right-0 z-[999] h-screen w-full bg-white transition-transform duration-[400ms] md:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
@@ -116,22 +108,13 @@ const Header = ({ session }: HeaderProps) => {
               </button>
             </>
           ) : (
-            <>
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg tracking-[2px] text-black no-underline transition-opacity duration-300 hover:opacity-60"
-              >
-                登入
-              </Link>
-              <Link
-                href="/signup"
-                onClick={() => setMobileMenuOpen(false)}
-                className="border border-black bg-black px-8 py-3 text-lg tracking-[2px] text-white no-underline"
-              >
-                開始使用
-              </Link>
-            </>
+            <Link
+              href="/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-lg tracking-[2px] text-black no-underline transition-opacity duration-300 hover:opacity-60"
+            >
+              登入
+            </Link>
           )}
         </div>
       </div>

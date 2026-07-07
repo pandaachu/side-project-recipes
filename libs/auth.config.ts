@@ -1,20 +1,10 @@
 import type { NextAuthConfig } from 'next-auth';
-import Facebook from 'next-auth/providers/facebook';
-import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
-import Line from 'next-auth/providers/line';
 
-// Edge-compatible auth config (no Prisma/bcrypt, used by middleware)
-// Credentials provider is added in libs/auth.ts since it needs Node.js runtime
+// Edge-compatible auth config (no Prisma, used by middleware)
+// Single-user app: Google is the only provider; allowlist enforced in libs/auth.ts
 export default {
-  providers: [
-    Google,
-    Facebook,
-    GitHub,
-    Line({
-      authorization: { params: { scope: 'openid email profile' } },
-    }),
-  ],
+  providers: [Google],
   pages: {
     signIn: '/login',
   },
