@@ -71,8 +71,8 @@ model Recipe {
   cookingTime Int?
   ingredients Json?
   steps       String[]     @default([])
-  tags        String?      @db.String
-  cookingTool String?      @db.String
+  tags         String?  @db.String
+  cookingTools String[] @default([])
   refUrl      String?      @db.String
   note        String?      @db.String
   status      RecipeStatus @default(PUBLISHED)

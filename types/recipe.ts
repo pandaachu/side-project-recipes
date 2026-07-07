@@ -10,7 +10,7 @@ export interface Recipe {
   }>;
   steps: string[];
   tags: string | null;
-  cookingTool: string | null;
+  cookingTools: string[];
   refUrl: string | null;
   note: string | null;
   status: 'DRAFT' | 'PUBLISHED';

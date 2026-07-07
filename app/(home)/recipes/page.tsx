@@ -5,6 +5,7 @@ import axios from 'axios';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 
 import SearchBar from '@/components/ui/SearchBar';
+import { COOKING_TOOLS } from '@/constants/recipe';
 import { Recipe } from '@/types/recipe';
 
 const RecipeCard = lazy(() => import('@/components/ui/RecipeCard'));
@@ -13,6 +14,7 @@ const PublicRecipes = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [selectedTools, setSelectedTools] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchList = async () => {
@@ -34,16 +36,28 @@ const PublicRecipes = () => {
     setSearchKeyword(keyword);
   }, []);
 
+  const toggleTool = (tool: string) => {
+    setSelectedTools((prev) => (prev.includes(tool) ? prev.filter((t) => t !== tool) : [...prev, tool]));
+  };
+
   const filteredRecipes = useMemo(() => {
-    if (!searchKeyword) return recipes;
-    const keyword = searchKeyword.toLowerCase();
     return recipes.filter((recipe) => {
-      const titleMatch = recipe.title.toLowerCase().includes(keyword);
-      const tagMatch = recipe.tags?.toLowerCase().includes(keyword);
-      const ingredientMatch = recipe.ingredients?.some((item) => item.ingredient.toLowerCase().includes(keyword));
-      return titleMatch || tagMatch || ingredientMatch;
+      // Equipment filter: match any selected tool (OR within tools)
+      if (selectedTools.length > 0) {
+        const toolMatch = recipe.cookingTools?.some((tool) => selectedTools.includes(tool));
+        if (!toolMatch) return false;
+      }
+      // Keyword filter: title / tags / ingredients (AND with equipment)
+      if (searchKeyword) {
+        const keyword = searchKeyword.toLowerCase();
+        const titleMatch = recipe.title.toLowerCase().includes(keyword);
+        const tagMatch = recipe.tags?.toLowerCase().includes(keyword);
+        const ingredientMatch = recipe.ingredients?.some((item) => item.ingredient.toLowerCase().includes(keyword));
+        if (!titleMatch && !tagMatch && !ingredientMatch) return false;
+      }
+      return true;
     });
-  }, [recipes, searchKeyword]);
+  }, [recipes, searchKeyword, selectedTools]);
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-6 py-16 md:px-12">
@@ -54,8 +68,29 @@ const PublicRecipes = () => {
       </div>
 
       {/* Search */}
-      <div className="mb-12 flex justify-center">
+      <div className="mb-6 flex justify-center">
         <SearchBar onSearch={handleSearch} />
+      </div>
+
+      {/* Equipment Filter Chips */}
+      <div className="mb-12 flex flex-wrap justify-center gap-2">
+        {COOKING_TOOLS.map((tool) => {
+          const isActive = selectedTools.includes(tool);
+          return (
+            <button
+              key={tool}
+              onClick={() => toggleTool(tool)}
+              aria-pressed={isActive}
+              className={`border px-4 py-1.5 text-xs tracking-[1px] transition-all duration-300 ${
+                isActive
+                  ? 'border-black bg-black text-white'
+                  : 'border-[#E0E0E0] bg-transparent text-[#757575] hover:border-black hover:text-black'
+              }`}
+            >
+              {tool}
+            </button>
+          );
+        })}
       </div>
 
       {/* Loading */}
@@ -89,7 +124,7 @@ const PublicRecipes = () => {
       {!isLoading && filteredRecipes.length === 0 && (
         <div className="py-20 text-center">
           <p className="text-sm text-[#9E9E9E]">
-            {searchKeyword ? `找不到「${searchKeyword}」相關的食譜` : '目前還沒有食譜'}
+            {searchKeyword || selectedTools.length > 0 ? '找不到符合條件的食譜' : '目前還沒有食譜'}
           </p>
         </div>
       )}

@@ -88,10 +88,10 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
             <p className="text-lg font-light">{recipe.cookingTime}分鐘</p>
           </div>
         )}
-        {recipe.cookingTool && (
+        {recipe.cookingTools && recipe.cookingTools.length > 0 && (
           <div className="text-center">
             <p className="mb-1 text-xs tracking-[1px] text-[#9E9E9E]">工具</p>
-            <p className="text-lg font-light">{recipe.cookingTool}</p>
+            <p className="text-lg font-light">{recipe.cookingTools.join('、')}</p>
           </div>
         )}
       </div>

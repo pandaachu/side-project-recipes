@@ -8,9 +8,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import ImageUpload from '@/components/ui/ImageUpload';
+import { COOKING_TOOLS, RECIPE_TAGS } from '@/constants/recipe';
 import { Recipe } from '@/types/recipe';
-
-const { Option } = Select;
 
 interface RecipeFormValues {
   title: string;
@@ -21,7 +20,7 @@ interface RecipeFormValues {
   steps: Array<string>;
   tags: string;
   refUrl: string;
-  cookingTool: string;
+  cookingTools: string[];
   note: string;
 }
 
@@ -45,7 +44,7 @@ export default function RecipeForm({ initialData, mode }: RecipeFormProps) {
         ingredients: initialData.ingredients || [],
         steps: initialData.steps || [],
         tags: initialData.tags || undefined,
-        cookingTool: initialData.cookingTool || undefined,
+        cookingTools: initialData.cookingTools || [],
         refUrl: initialData.refUrl || undefined,
         note: initialData.note || undefined,
       });
@@ -111,25 +110,22 @@ export default function RecipeForm({ initialData, mode }: RecipeFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <Form.Item label="分類" name="tags">
-          <Select size="large" placeholder="請選擇" allowClear>
-            <Option value="美式">美式</Option>
-            <Option value="中式">中式</Option>
-            <Option value="日式">日式</Option>
-            <Option value="韓式">韓式</Option>
-            <Option value="台式">台式</Option>
-            <Option value="甜點">甜點</Option>
-          </Select>
+          <Select
+            size="large"
+            placeholder="請選擇"
+            allowClear
+            options={RECIPE_TAGS.map((tag) => ({ value: tag, label: tag }))}
+          />
         </Form.Item>
 
-        <Form.Item label="烹調工具" name="cookingTool">
-          <Select size="large" placeholder="請選擇" allowClear>
-            <Option value="鑄鐵鍋">鑄鐵鍋</Option>
-            <Option value="電鍋">電鍋</Option>
-            <Option value="電子鍋">電子鍋</Option>
-            <Option value="烤箱">烤箱</Option>
-            <Option value="微波爐">微波爐</Option>
-            <Option value="氣炸鍋">氣炸鍋</Option>
-          </Select>
+        <Form.Item label="烹調工具" name="cookingTools">
+          <Select
+            size="large"
+            mode="multiple"
+            placeholder="請選擇（可複選）"
+            allowClear
+            options={COOKING_TOOLS.map((tool) => ({ value: tool, label: tool }))}
+          />
         </Form.Item>
       </div>
 

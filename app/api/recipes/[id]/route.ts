@@ -45,7 +45,7 @@ const updateValidate = z.object({
   ingredients: z.array(ingredientSchema).optional(),
   steps: z.array(z.string()).optional(),
   tags: z.string().nullable().optional(),
-  cookingTool: z.string().nullable().optional(),
+  cookingTools: z.array(z.string()).optional(),
   note: z.string().nullable().optional(),
   refUrl: z.string().nullable().optional(),
 });
