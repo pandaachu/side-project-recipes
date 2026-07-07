@@ -5,6 +5,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import { use, useEffect, useState } from 'react';
 
+import SourceBadge from '@/components/ui/SourceBadge';
 import { Recipe } from '@/types/recipe';
 
 interface RecipeDetailProps {
@@ -145,6 +146,21 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
           </div>
           <p className="text-sm leading-relaxed text-[#616161]">{recipe.note}</p>
         </section>
+      )}
+
+      {/* Source Link */}
+      {recipe.refUrl && (
+        <div className="mb-12 flex justify-center">
+          <a
+            href={recipe.refUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 border border-black px-6 py-3 text-sm tracking-[1px] text-black no-underline transition-all duration-300 hover:bg-black hover:text-white"
+          >
+            <SourceBadge refUrl={recipe.refUrl} />
+            查看原始影片 / 貼文
+          </a>
+        </div>
       )}
 
       {/* Tags */}

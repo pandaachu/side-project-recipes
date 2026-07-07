@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import SourceBadge from '@/components/ui/SourceBadge';
 import { Recipe } from '@/types/recipe';
 
 export default function MemberRecipes() {
@@ -16,7 +17,6 @@ export default function MemberRecipes() {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchRecipes = async () => {
-    debugger;
     try {
       const response = await axios.get('/api/member/recipes');
       setRecipes(response.data.recipes);
@@ -118,6 +118,8 @@ export default function MemberRecipes() {
                   <span>{recipe.forPeople}人份</span>
                   {recipe.cookingTime && <span>{recipe.cookingTime}分鐘</span>}
                   {recipe.tags && <span>{recipe.tags}</span>}
+                  {recipe.cookingTools.length > 0 && <span>{recipe.cookingTools.join('、')}</span>}
+                  <SourceBadge refUrl={recipe.refUrl} />
                 </div>
               </div>
 
