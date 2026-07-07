@@ -8,6 +8,8 @@ import { use, useCallback, useEffect, useState } from 'react';
 
 import CookLogButton from '@/components/recipe/CookLogButton';
 import SourceBadge from '@/components/ui/SourceBadge';
+import { scaleQuantity } from '@/libs/quantity';
+import { getYouTubeVideoId } from '@/libs/recipeSource';
 import { Recipe } from '@/types/recipe';
 
 interface RecipeDetailProps {
@@ -21,6 +23,8 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
   const { data: session } = useSession();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Serving-size scaling: null until user adjusts (or base is non-numeric)
+  const [servings, setServings] = useState<number | null>(null);
 
   const fetchRecipe = useCallback(async () => {
     try {
@@ -61,6 +65,12 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
     );
   }
 
+  const youTubeId = getYouTubeVideoId(recipe.refUrl);
+  const baseServings = parseInt(recipe.forPeople, 10);
+  const canScale = !Number.isNaN(baseServings) && baseServings > 0;
+  const currentServings = servings ?? (canScale ? baseServings : null);
+  const ratio = canScale && currentServings ? currentServings / baseServings : 1;
+
   return (
     <div className="animate-fade-in-up mx-auto max-w-3xl px-6 py-16 md:px-12">
       {/* Header */}
@@ -69,18 +79,31 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
         <p className="text-sm text-[#9E9E9E]">{recipe.authorName || '匿名'}</p>
       </div>
 
-      {/* Cover Image (optional — imported IG/FB recipes may have none) */}
-      {recipe.coverImage && (
-        <div className="relative mb-12 aspect-[16/10] w-full overflow-hidden">
-          <Image
-            src={recipe.coverImage}
-            alt={recipe.title}
-            fill
-            className="object-cover"
-            priority
-            sizes="(max-width: 768px) 100vw, 768px"
+      {/* YouTube Embed (falls back to cover image for non-YouTube sources) */}
+      {youTubeId ? (
+        <div className="relative mb-12 aspect-video w-full overflow-hidden">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${youTubeId}`}
+            title={recipe.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+            className="absolute inset-0 h-full w-full border-0"
           />
         </div>
+      ) : (
+        recipe.coverImage && (
+          <div className="relative mb-12 aspect-[16/10] w-full overflow-hidden">
+            <Image
+              src={recipe.coverImage}
+              alt={recipe.title}
+              fill
+              className="object-cover"
+              priority
+              sizes="(max-width: 768px) 100vw, 768px"
+            />
+          </div>
+        )
       )}
 
       {/* Info Bar */}
@@ -125,15 +148,40 @@ const RecipeDetail = ({ params }: RecipeDetailProps) => {
       {/* Ingredients */}
       {recipe.ingredients && recipe.ingredients.length > 0 && (
         <section className="mb-12">
-          <div className="mb-6">
-            <h2 className="text-xl font-medium">食材</h2>
-            <span className="text-[10px] tracking-[2px] text-[#9E9E9E]">INGREDIENTS</span>
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <h2 className="text-xl font-medium">食材</h2>
+              <span className="text-[10px] tracking-[2px] text-[#9E9E9E]">INGREDIENTS</span>
+            </div>
+            {canScale && currentServings && (
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setServings(Math.max(1, currentServings - 1))}
+                  disabled={currentServings <= 1}
+                  aria-label="減少人份"
+                  className="flex h-7 w-7 items-center justify-center border border-[#E0E0E0] bg-transparent text-sm transition-all duration-300 hover:border-black disabled:opacity-30"
+                >
+                  −
+                </button>
+                <span className="min-w-[52px] text-center text-sm">
+                  {currentServings} 人份
+                  {ratio !== 1 && <span className="ml-1 text-[10px] text-[#9E9E9E]">(換算)</span>}
+                </span>
+                <button
+                  onClick={() => setServings(currentServings + 1)}
+                  aria-label="增加人份"
+                  className="flex h-7 w-7 items-center justify-center border border-[#E0E0E0] bg-transparent text-sm transition-all duration-300 hover:border-black"
+                >
+                  ＋
+                </button>
+              </div>
+            )}
           </div>
           <ul className="divide-y divide-[#F5F5F5]">
             {recipe.ingredients.map((item, index) => (
               <li key={index} className="flex items-center justify-between py-3">
                 <span className="text-sm">{item.ingredient}</span>
-                <span className="text-sm text-[#757575]">{item.quantity}</span>
+                <span className="text-sm text-[#757575]">{scaleQuantity(item.quantity, ratio)}</span>
               </li>
             ))}
           </ul>
